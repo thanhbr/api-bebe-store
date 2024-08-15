@@ -1,0 +1,14 @@
+{
+  "name": "api-bebe-store",
+  "version": "1.0.0",
+  "description": "this is api for bebe store page",
+  "main": "index.js",
+  "author": "Ma The Thanh",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "nodemon": "^3.1.4"
+  },
+  "type": "module"
+}
