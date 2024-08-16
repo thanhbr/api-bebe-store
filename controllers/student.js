@@ -1,11 +1,12 @@
 import { studentRepository } from "../repositories/index.js";
+import HttpStatusCode from "../exceptions/HttpStatusCode.js";
 
 const getList = async (req, res) => {
     const { searchString, page, size } = req.body;
     
     await studentRepository.getList({ searchString, page, size })
 
-    res.status(200).json({
+    res.status(HttpStatusCode.OK).json({
         message: "Get students successfully",
         data: [
             {
@@ -21,7 +22,7 @@ const getList = async (req, res) => {
 };
 
 const getDetail = async (req, res) => {
-    res.status(200).json({
+    res.status(HttpStatusCode.OK).json({
         message: "GET detail successfully",
         data: {
             id: req?.params?.id ?? ""
@@ -30,14 +31,14 @@ const getDetail = async (req, res) => {
 };
 
 const create = async(req, res) => {
-    res.status(201).json({
+    res.status(HttpStatusCode.INSERT_OK).json({
         message: "Created student successfully",
         id: req?.params?.id ?? ""
     });
 };
 
 const update = async (req, res) => {
-    res.status(201).json({
+    res.status(HttpStatusCode.INSERT_OK).json({
         message: "PATCH(create new object if not exists)",
         id: req?.params?.id ?? ""
     });
