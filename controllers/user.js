@@ -9,21 +9,25 @@ myEvent.on("event.register.user", (params) => {
 })
 
 const login = async (req, res) => {
-    const errors = validationResult(req);
-    if(!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() })
-    }
-
-    const { email, password } = req.body;
-    await userRepository.login({email, password});
-
-    res.status(HttpStatusCode.OK).json({
-        message: "Login user successfully",
-        data: {
-            id: 1,
-            name: "Thi Tit"
+    try {
+        const errors = validationResult(req);
+        if(!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() })
         }
-    })
+    
+        const { email, password } = req.body;
+        const user = await userRepository.login({email, password});
+    
+        res.status(HttpStatusCode.OK).json({
+            message: "Login user successfully",
+            data: user
+        })
+        
+    } catch (error) {
+        res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).json({
+            message: error.toString()
+        })
+    }
 };
 
 const register = async (req, res) => {
