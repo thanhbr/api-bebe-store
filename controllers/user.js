@@ -35,18 +35,18 @@ const register = async (req, res) => {
         address 
     } = req.body;
 
-    await userRepository.register({ 
-        name,
-        email, 
-        password,
-        phoneNumber,
-        address 
-    });
-    myEvent.emit("event.register.user", {email, phoneNumber});
-
-    res.status(HttpStatusCode.INSERT_OK).json({
-        message: "Register user successfully"
-    })
+    try {
+        myEvent.emit("event.register.user", {email, phoneNumber});
+        const user = await userRepository.register({ name, email, password, phoneNumber, address });
+        res.status(HttpStatusCode.INSERT_OK).json({
+            message: "Register user successfully",
+            data: user
+        });
+    } catch (error) {
+        res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).json({
+            message: error.toString()
+        });
+    }
 };
 
 const getList = async (req, res) => {
