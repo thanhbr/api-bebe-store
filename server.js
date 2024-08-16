@@ -4,6 +4,7 @@ import {
     userRouter,
     studentRouter
 } from "./routes/index.js";
+import connect from "./database/database.js";
 
 dotenv.config();
 
@@ -18,5 +19,6 @@ app.get("/", (req,res) => {
 })
 
 app.listen(port, async() => {
+    await connect();
     console.log(`listening on port: ${port}`)
 });
