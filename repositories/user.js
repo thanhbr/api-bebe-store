@@ -5,12 +5,17 @@ import bcrypt from "bcrypt"
 
 
 const login = async ({ email, password }) => {
-    // encrypt password, use bcrypt
-    // const isMatched = await bcrypt.compare(password, existingUser.password);
-    // if(isMatched) {
-
-    // }
-    print("login users", OutputType.INFORMATION);
+    const existingUser = await User.findOne({email}).exec();
+    if(existingUser) {
+        // encrypt password, use bcrypt
+        const isMatched = await bcrypt.compare(password, existingUser.password);
+        if(!!isMatched) {
+            // create JWS
+        } else {
+            throw new Exception(Exception.WRONG_EMAIL_OR_PASSWORD)
+        }
+    }
+    throw new Exception(Exception.WRONG_EMAIL_OR_PASSWORD)
 }
 
 const register = async ({ 
