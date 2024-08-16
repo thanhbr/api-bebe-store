@@ -1,20 +1,13 @@
 import express from "express";
+import { studentController } from "../controllers/index.js";
 const router = express.Router();
 
-router.get("/", (req, res) => {
-    res.send("List students");
-});
+router.get("/", studentController.getList);
 
-router.get("/:id", (req, res) => {
-    res.send("Detail student by id " + req?.params?.id ?? "");
-});
+router.get("/:id", studentController.getDetail);
 
-router.post("/", (req, res) => {
-    res.send("Created student");
-});
+router.post("/", studentController.create);
 
-router.patch("/", (req, res) => {
-    res.send("PATCH (create new object if not exists) insert student")
-})
+router.patch("/", studentController.getDetail);
 
 export default router;
