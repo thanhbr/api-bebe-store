@@ -1,6 +1,6 @@
 import chalk from "chalk";
 
-class OutType {
+class OutputType {
     static INFORMATION = "INFORMATION";
     static SUCCESS = "SUCCESS";
     static WARNING = "WARNING";
@@ -9,16 +9,16 @@ class OutType {
 
 function print(message, outputType) {
     switch(outputType) {
-        case OutType.INFORMATION:
+        case OutputType.INFORMATION:
             console.log(chalk.white(message));
             break;
-        case OutType.SUCCESS:
+        case OutputType.SUCCESS:
             console.log(chalk.green(message));
             break;
-        case OutType.WARNING:
+        case OutputType.WARNING:
             console.log(chalk.yellow(message));
             break;
-        case OutType.ERROR:
+        case OutputType.ERROR:
             console.log(chalk.red(message));
             break;
         default:
@@ -28,6 +28,6 @@ function print(message, outputType) {
 
 
 export {
-    OutType,
+    OutputType,
     print
 }
