@@ -11,6 +11,15 @@ const getList = async({
     console.log("get list students");
 }
 
+const getDetail = async(studentId) => {
+    try {
+        const detailStudent = await Student.findById(studentId);
+        return detailStudent;
+    } catch (exception) {
+        throw new Exception(Exception.CANNOT_FIND_STUDENT_BY_ID)
+    }
+}
+
 const create = async({
     name,
     email,
@@ -59,6 +68,7 @@ async function generateFakeStudents() {
 
 export default {
     getList,
+    getDetail,
     create,
     generateFakeStudents
 }

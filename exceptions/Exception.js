@@ -8,6 +8,7 @@ export default class Exception extends Error {
     static CANNOT_REGISTER_USER = "Cannot register user";
     static WRONG_EMAIL_OR_PASSWORD = "Wrong email or password";
     static CANNOT_CREATE_STUDENT = "Cannot create student";
+    static CANNOT_FIND_STUDENT_BY_ID = "Cannot find student by id";
     
     constructor(message, validationErrors={}) {
         super(message);
