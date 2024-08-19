@@ -1,5 +1,7 @@
 import Exception from "../exceptions/Exception.js";
+import { print } from "../helpers/print.js";
 import { Student } from "../models/index.js";
+import { faker } from '@faker-js/faker';
 
 const getList = async({
     page,
@@ -36,7 +38,27 @@ const create = async({
     }
 }
 
+async function generateFakeStudents() {
+    try {
+        [...Array(20).keys()].forEach(async (index) => {
+            let fakeStudent = {
+                name: `${faker.internet.userName()}-fake`,
+                email: faker.internet.email(),
+                languages: [faker.helpers.arrayElement(['vi', 'en'])],
+                gender: faker.helpers.arrayElement(['female', 'male']),
+                phoneNumber: faker.phone.imei(),
+                address: faker.location.country(),
+            };
+            await Student.create(fakeStudent);
+            print(`Created student with name ${fakeStudent.name}`);
+        });
+    } catch (error) {
+        
+    }
+}
+
 export default {
     getList,
-    create
+    create,
+    generateFakeStudents
 }

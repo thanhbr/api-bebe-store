@@ -54,9 +54,21 @@ const update = async (req, res) => {
     });
 };
 
+const generateFakeStudents = async (req, res) => {
+    try {
+        await studentRepository.generateFakeStudents(req.body)
+        res.status(HttpStatusCode.INSERT_OK).json({
+            message: "Created fake student successfully"
+        });
+    } catch (error) {
+        
+    }
+}
+
 export default {
     getList,
     getDetail,
     create,
-    update
+    update,
+    generateFakeStudents // should be private
 }
