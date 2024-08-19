@@ -3,12 +3,25 @@ import { print } from "../helpers/print.js";
 import { Student } from "../models/index.js";
 import { faker } from '@faker-js/faker';
 
-const getList = async({
-    page,
-    size,
-    searchString
-}) => {
-    console.log("get list students");
+const getList = async({ search, page, size}) => {
+    try {
+        page = parseInt(page);
+        size = parseInt(size);
+        const filterStudents = await Student.aggregate([
+            { $match: {
+                $or: [
+                    { name: { $regex: `.*${search}.*`, $options: "i" } },
+                    { email: { $regex: `.*${search}.*`, $options: "i" } },
+                    { phoneNumber: { $regex: `.*${search}.*`, $options: "i" } },
+                ]
+            } },
+            { $skip: ( page - 1 ) * size },
+            { $limit: size }
+        ]);
+        return filterStudents;
+    } catch (exception) {
+        throw new Exception(Exception.CANNOT_GET_STUDENT)
+    }
 }
 
 const getDetail = async(studentId) => {

@@ -1,6 +1,6 @@
-import { PATH } from "../helpers/path.js";
 import HttpStatusCode from "../exceptions/HttpStatusCode.js";
 import jwt from "jsonwebtoken";
+import { PATH } from "../global/path.js";
 
 export default function checkToken(req, res, next) {
     // bypass login, register

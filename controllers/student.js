@@ -1,24 +1,27 @@
 import { studentRepository } from "../repositories/index.js";
 import HttpStatusCode from "../exceptions/HttpStatusCode.js";
+import { MAX_RECORD } from "../global/constant.js";
 
 const getList = async (req, res) => {
-    const { searchString, page, size } = req.body;
-    
-    await studentRepository.getList({ searchString, page, size })
+    try {
+        let { search = "", page = 1, size = MAX_RECORD } = req.query;
+        size = size >= MAX_RECORD ? MAX_RECORD : size;
 
-    res.status(HttpStatusCode.OK).json({
-        message: "Get students successfully",
-        data: [
-            {
-                id: 1,
-                name: "Thi Tit"
-            },
-            {
-                id: 2,
-                name: "Van A"
-            }
-        ]
-    });
+        const filterStudents = await studentRepository.getList({ search, page, size })
+    
+        res.status(HttpStatusCode.OK).json({
+            message: "Get students successfully",
+            size: filterStudents.length,
+            size1: size,
+            page: page,
+            search: search,
+            data: filterStudents
+        });
+    } catch (exception) {
+        res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).json({
+            message: exception.toString(),
+        });
+    }
 };
 
 const getDetail = async (req, res) => {
