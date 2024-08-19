@@ -1,24 +1,31 @@
 import { studentRepository } from "../repositories/index.js";
 import HttpStatusCode from "../exceptions/HttpStatusCode.js";
+import { DEFAULT_SIZE_RECORD, MAX_RECORD } from "../global/constant.js";
+import { MESSAGE } from "../global/message.js";
 
 const getList = async (req, res) => {
-    const { searchString, page, size } = req.body;
-    
-    await studentRepository.getList({ searchString, page, size })
+    try {
+        let { search = "", page = 1, size = DEFAULT_SIZE_RECORD } = req.query;
+        page = parseInt(page);
+        size = parseInt(size >= MAX_RECORD ? MAX_RECORD : size);
 
-    res.status(HttpStatusCode.OK).json({
-        message: "Get students successfully",
-        data: [
-            {
-                id: 1,
-                name: "Thi Tit"
+        const query = await studentRepository.getList({ search, page, size })
+    
+        res.status(HttpStatusCode.OK).json({
+            message: MESSAGE.STUDENT.GET_LIST_SUCCESSFULLY,
+            metadata: {
+                current_page: page,
+                per_page: size,
+                total_item: query.totalRecords,
+                total_page: Math.ceil(query.totalRecords / size)
             },
-            {
-                id: 2,
-                name: "Van A"
-            }
-        ]
-    });
+            data: query.filterStudents,
+        });
+    } catch (exception) {
+        res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).json({
+            message: exception.toString(),
+        });
+    }
 };
 
 const getDetail = async (req, res) => {
@@ -27,7 +34,7 @@ const getDetail = async (req, res) => {
         const detailStudent = await studentRepository.getDetail(studentId)
         
         res.status(HttpStatusCode.OK).json({
-            message: "GET detail successfully",
+            message: MESSAGE.STUDENT.GET_DETAIL_SUCCESSFULLY,
             data: detailStudent
         });
     } catch (exception) {
@@ -43,7 +50,7 @@ const create = async(req, res) => {
         const newStudent = await studentRepository.create({ name, email, languages, gender, phoneNumber, address });
 
         res.status(HttpStatusCode.INSERT_OK).json({
-            message: "Created student successfully",
+            message: MESSAGE.STUDENT.CREATED,
             data: newStudent,
         });
     } catch (exception) {
@@ -55,20 +62,40 @@ const create = async(req, res) => {
 };
 
 const update = async (req, res) => {
-    res.status(HttpStatusCode.INSERT_OK).json({
-        message: "PATCH(create new object if not exists)",
-        id: req?.params?.id ?? ""
-    });
+    try {
+        const { id } = req.params;
+        const { name, email, languages, gender, phoneNumber, address } = req.body;
+
+        const student = await studentRepository.update({ id, name, email, languages, gender, phoneNumber, address });
+        
+        if(student) {
+            res.status(HttpStatusCode.INSERT_OK).json({
+                message: MESSAGE.STUDENT.UPDATED,
+                data: student
+            });
+        } else {
+            res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).json({
+                message: MESSAGE.STUDENT.NOT_FIND_ID
+            })
+        }
+        
+    } catch (exception) {
+        res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).json({
+            message: exception.toString()
+        })
+    }
 };
 
 const generateFakeStudents = async (req, res) => {
     try {
         await studentRepository.generateFakeStudents(req.body)
         res.status(HttpStatusCode.INSERT_OK).json({
-            message: "Created fake student successfully"
+            message: MESSAGE.STUDENT.CREATED_FAKE
         });
     } catch (error) {
-        
+        res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).json({
+            message: MESSAGE.NOT_SUPPORTED
+        })
     }
 }
 

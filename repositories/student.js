@@ -3,12 +3,35 @@ import { print } from "../helpers/print.js";
 import { Student } from "../models/index.js";
 import { faker } from '@faker-js/faker';
 
-const getList = async({
-    page,
-    size,
-    searchString
-}) => {
-    console.log("get list students");
+const getList = async({ search, page, size}) => {
+    try {
+        const [filterStudents, totalRecords] = await Promise.all([
+            Student.aggregate([
+                { $match: {
+                    $or: [
+                        { name: { $regex: `.*${search}.*`, $options: "i" } },
+                        { email: { $regex: `.*${search}.*`, $options: "i" } },
+                        { phoneNumber: { $regex: `.*${search}.*`, $options: "i" } },
+                    ]
+                } },
+                { $skip: ( page - 1 ) * size },
+                { $limit: size }
+            ]),
+            Student.countDocuments({
+                $or: [
+                  { name: { $regex: `.*${search}.*`, $options: "i" } },
+                  { email: { $regex: `.*${search}.*`, $options: "i" } },
+                  { phoneNumber: { $regex: `.*${search}.*`, $options: "i" } },
+                ],
+            }),
+        ]);
+        return {
+            filterStudents,
+            totalRecords
+        };
+    } catch (exception) {
+        throw new Exception(Exception.CANNOT_GET_STUDENT)
+    }
 }
 
 const getDetail = async(studentId) => {
@@ -47,6 +70,38 @@ const create = async({
     }
 }
 
+const update = async({
+    id,
+    name,
+    email,
+    languages,
+    gender,
+    phoneNumber,
+    address,
+}) => {
+    try {
+        const updateData = {
+            ...(name && { name }),
+            ...(email && { email }),
+            ...(languages && { languages }),
+            ...(gender && { gender }),
+            ...(phoneNumber && { phoneNumber }),
+            ...(address && { address }),
+          };
+      
+        const updatedStudent = await Student.findByIdAndUpdate(id, updateData, { new: true }); // Return the updated document
+
+        if (!updatedStudent) {
+            throw new Exception(Exception.CANNOT_UPDATE_STUDENT);
+        }
+        return updatedStudent;
+    } catch (exception) {
+        if(!!exception.errors) {
+            throw new Exception(Exception.CANNOT_UPDATE_STUDENT, exception.errors);
+        }
+    }
+}
+
 async function generateFakeStudents() {
     try {
         [...Array(20).keys()].forEach(async (index) => {
@@ -70,5 +125,6 @@ export default {
     getList,
     getDetail,
     create,
+    update,
     generateFakeStudents
 }
