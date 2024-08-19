@@ -16,11 +16,11 @@ const login = async (req, res) => {
         }
     
         const { email, password } = req.body;
-        const user = await userRepository.login({email, password});
+        const existingUser = await userRepository.login({email, password});
     
         res.status(HttpStatusCode.OK).json({
             message: "Login user successfully",
-            data: user
+            data: existingUser
         })
         
     } catch (error) {

@@ -1,7 +1,8 @@
 import { print, OutputType } from "../helpers/print.js"
 import User from "../models/User.js";
 import Exception from './../exceptions/Exception.js';
-import bcrypt from "bcrypt"
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 
 const login = async ({ email, password }) => {
@@ -11,6 +12,18 @@ const login = async ({ email, password }) => {
         const isMatched = await bcrypt.compare(password, existingUser.password);
         if(!!isMatched) {
             // create JWS
+            const activeUser = {
+                ...existingUser.toObject(),
+                password: "",
+            }
+            const token = jwt.sign({
+                data: activeUser
+            }, process.env.JWT_SECRET,
+            { expiresIn: '1h' });
+            return {
+                ...activeUser,
+                token,
+            }
         } else {
             throw new Exception(Exception.WRONG_EMAIL_OR_PASSWORD)
         }
