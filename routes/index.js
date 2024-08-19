@@ -1,14 +1,19 @@
 import express from 'express';
+import loginRouter from "./login.js";
+import registerRouter from "./register.js";
 import userRouter from './users.js';
 import studentRouter from './students.js';
 import checkToken from '../authentication/auth.js';
+import { PATH } from '../global/path.js';
 
 const router = express.Router();
 
 router.use(express.json());
 router.use(checkToken);
 
-router.use('/users', userRouter);
-router.use('/students', studentRouter);
+router.use(PATH.LOGIN, loginRouter);
+router.use(PATH.REGISTER, registerRouter)
+router.use(PATH.USERS, userRouter);
+router.use(PATH.STUDENTS, studentRouter);
 
 export default router;
