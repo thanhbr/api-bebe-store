@@ -17,7 +17,13 @@ const getList = async({ search, page, size}) => {
                 { $skip: ( page - 1 ) * size },
                 { $limit: size }
             ]),
-            Student.countDocuments(),
+            Student.countDocuments({
+                $or: [
+                  { name: { $regex: `.*${search}.*`, $options: "i" } },
+                  { email: { $regex: `.*${search}.*`, $options: "i" } },
+                  { phoneNumber: { $regex: `.*${search}.*`, $options: "i" } },
+                ],
+            }),
         ]);
         return {
             filterStudents,
@@ -74,15 +80,21 @@ const update = async({
     address,
 }) => {
     try {
-        const student = await Student.findById(id);
-        student.name = name ?? student.name;
-        student.email = email ?? student.email;
-        student.languages = languages ?? student.languages;
-        student.gender = gender ?? student.gender;
-        student.phoneNumber = phoneNumber ?? student.phoneNumber;
-        student.address = address ?? student.address;
-        await student.save();
-        return student;
+        const updateData = {
+            ...(name && { name }),
+            ...(email && { email }),
+            ...(languages && { languages }),
+            ...(gender && { gender }),
+            ...(phoneNumber && { phoneNumber }),
+            ...(address && { address }),
+          };
+      
+        const updatedStudent = await Student.findByIdAndUpdate(id, updateData, { new: true }); // Return the updated document
+
+        if (!updatedStudent) {
+            throw new Exception(Exception.CANNOT_UPDATE_STUDENT);
+        }
+        return updatedStudent;
     } catch (exception) {
         if(!!exception.errors) {
             throw new Exception(Exception.CANNOT_UPDATE_STUDENT, exception.errors);
