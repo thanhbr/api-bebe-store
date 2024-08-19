@@ -31,10 +31,20 @@ const getDetail = async (req, res) => {
 };
 
 const create = async(req, res) => {
-    res.status(HttpStatusCode.INSERT_OK).json({
-        message: "Created student successfully",
-        id: req?.params?.id ?? ""
-    });
+    try {
+        const { name, email, languages, gender, phoneNumber, address } = req.body;
+        const newStudent = await studentRepository.create({ name, email, languages, gender, phoneNumber, address });
+
+        res.status(HttpStatusCode.INSERT_OK).json({
+            message: "Created student successfully",
+            data: newStudent,
+        });
+    } catch (exception) {
+        res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).json({
+            message: exception.toString(),
+            validationErrors: exception.validationErrors
+        });
+    }
 };
 
 const update = async (req, res) => {

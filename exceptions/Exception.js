@@ -7,8 +7,11 @@ export default class Exception extends Error {
     static USER_EXIST = "User already exists";
     static CANNOT_REGISTER_USER = "Cannot register user";
     static WRONG_EMAIL_OR_PASSWORD = "Wrong email or password";
-    constructor(message) {
+    static CANNOT_CREATE_STUDENT = "Cannot create student";
+    
+    constructor(message, validationErrors={}) {
         super(message);
-        print(message, OutputType.ERROR)
+        print(message, OutputType.ERROR);
+        this.validationErrors = validationErrors;
     }
 }

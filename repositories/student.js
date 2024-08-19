@@ -1,3 +1,6 @@
+import Exception from "../exceptions/Exception.js";
+import { Student } from "../models/index.js";
+
 const getList = async({
     page,
     size,
@@ -14,8 +17,23 @@ const create = async({
     phoneNumber,
     address,
 }) => {
-    console.log("create student");
-    return { name }
+    try {
+        const newStudent = await Student.create({
+            name,
+            email,
+            languages,
+            gender,
+            phoneNumber,
+            address
+        });
+        return {
+            ...newStudent._doc,
+        }
+    } catch (exception) {
+        if(!!exception.errors) {
+            throw new Exception(Exception.CANNOT_CREATE_STUDENT, exception.errors);
+        }
+    }
 }
 
 export default {
