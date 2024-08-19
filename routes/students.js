@@ -10,4 +10,6 @@ router.post("/", studentController.create);
 
 router.patch("/", studentController.getDetail);
 
+// router.post("/fake", studentController.generateFakeStudents);
+
 export default router;
