@@ -15,6 +15,7 @@ const create = async({
     address,
 }) => {
     console.log("create student");
+    return { name }
 }
 
 export default {
