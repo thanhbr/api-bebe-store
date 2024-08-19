@@ -5,20 +5,24 @@ import { faker } from '@faker-js/faker';
 
 const getList = async({ search, page, size}) => {
     try {
-        page = parseInt(page);
-        size = parseInt(size);
-        const filterStudents = await Student.aggregate([
-            { $match: {
-                $or: [
-                    { name: { $regex: `.*${search}.*`, $options: "i" } },
-                    { email: { $regex: `.*${search}.*`, $options: "i" } },
-                    { phoneNumber: { $regex: `.*${search}.*`, $options: "i" } },
-                ]
-            } },
-            { $skip: ( page - 1 ) * size },
-            { $limit: size }
+        const [filterStudents, totalRecords] = await Promise.all([
+            Student.aggregate([
+                { $match: {
+                    $or: [
+                        { name: { $regex: `.*${search}.*`, $options: "i" } },
+                        { email: { $regex: `.*${search}.*`, $options: "i" } },
+                        { phoneNumber: { $regex: `.*${search}.*`, $options: "i" } },
+                    ]
+                } },
+                { $skip: ( page - 1 ) * size },
+                { $limit: size }
+            ]),
+            Student.countDocuments(),
         ]);
-        return filterStudents;
+        return {
+            filterStudents,
+            totalRecords
+        };
     } catch (exception) {
         throw new Exception(Exception.CANNOT_GET_STUDENT)
     }
@@ -60,6 +64,32 @@ const create = async({
     }
 }
 
+const update = async({
+    id,
+    name,
+    email,
+    languages,
+    gender,
+    phoneNumber,
+    address,
+}) => {
+    try {
+        const student = await Student.findById(id);
+        student.name = name ?? student.name;
+        student.email = email ?? student.email;
+        student.languages = languages ?? student.languages;
+        student.gender = gender ?? student.gender;
+        student.phoneNumber = phoneNumber ?? student.phoneNumber;
+        student.address = address ?? student.address;
+        await student.save();
+        return student;
+    } catch (exception) {
+        if(!!exception.errors) {
+            throw new Exception(Exception.CANNOT_UPDATE_STUDENT, exception.errors);
+        }
+    }
+}
+
 async function generateFakeStudents() {
     try {
         [...Array(20).keys()].forEach(async (index) => {
@@ -83,5 +113,6 @@ export default {
     getList,
     getDetail,
     create,
+    update,
     generateFakeStudents
 }

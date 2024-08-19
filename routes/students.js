@@ -4,11 +4,11 @@ const router = express.Router();
 
 router.get("/", studentController.getList);
 
-router.get("/:id", studentController.getDetail);
-
 router.post("/", studentController.create);
 
-router.patch("/", studentController.getDetail);
+router.get("/:id", studentController.getDetail);
+
+router.patch("/:id", studentController.update);
 
 // router.post("/fake", studentController.generateFakeStudents);
 

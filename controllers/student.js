@@ -1,21 +1,24 @@
 import { studentRepository } from "../repositories/index.js";
 import HttpStatusCode from "../exceptions/HttpStatusCode.js";
-import { MAX_RECORD } from "../global/constant.js";
+import { DEFAULT_SIZE_RECORD, MAX_RECORD } from "../global/constant.js";
 
 const getList = async (req, res) => {
     try {
-        let { search = "", page = 1, size = MAX_RECORD } = req.query;
-        size = size >= MAX_RECORD ? MAX_RECORD : size;
+        let { search = "", page = 1, size = DEFAULT_SIZE_RECORD } = req.query;
+        page = parseInt(page);
+        size = parseInt(size >= MAX_RECORD ? MAX_RECORD : size);
 
-        const filterStudents = await studentRepository.getList({ search, page, size })
+        const query = await studentRepository.getList({ search, page, size })
     
         res.status(HttpStatusCode.OK).json({
             message: "Get students successfully",
-            size: filterStudents.length,
-            size1: size,
-            page: page,
-            search: search,
-            data: filterStudents
+            metadata: {
+                current_page: page,
+                per_page: size,
+                total_item: query.totalRecords,
+                total_page:  Math.ceil(query.totalRecords / size)
+            },
+            data: query.filterStudents,
         });
     } catch (exception) {
         res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).json({
@@ -58,10 +61,21 @@ const create = async(req, res) => {
 };
 
 const update = async (req, res) => {
-    res.status(HttpStatusCode.INSERT_OK).json({
-        message: "PATCH(create new object if not exists)",
-        id: req?.params?.id ?? ""
-    });
+    try {
+        const { id } = req.params;
+        const { name, email, languages, gender, phoneNumber, address } = req.body;
+
+        const student = await studentRepository.update({ id, name, email, languages, gender, phoneNumber, address });
+
+        res.status(HttpStatusCode.INSERT_OK).json({
+            message: "Updated student successfully",
+            data: student
+        });
+    } catch (exception) {
+        res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).json({
+            message: exception.toString()
+        })
+    }
 };
 
 const generateFakeStudents = async (req, res) => {
@@ -71,7 +85,9 @@ const generateFakeStudents = async (req, res) => {
             message: "Created fake student successfully"
         });
     } catch (error) {
-        
+        res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).json({
+            message: "not supported!!!"
+        })
     }
 }
 
