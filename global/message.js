@@ -24,5 +24,9 @@ export const MESSAGE = {
         CREATED_FAKE: "Created fake student successfully",
         FAILED_CREATE: "Cannot create student",
     },
+    BRAND: {
+        CREATED: "Created brand successfully",
+        FAILED_CREATE: "Cannot created brand",
+    },
     NOT_SUPPORTED: "not supported!!!"
 }
