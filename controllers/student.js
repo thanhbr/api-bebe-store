@@ -22,12 +22,19 @@ const getList = async (req, res) => {
 };
 
 const getDetail = async (req, res) => {
-    res.status(HttpStatusCode.OK).json({
-        message: "GET detail successfully",
-        data: {
-            id: req?.params?.id ?? ""
-        }
-    });
+    try {
+        const studentId = req?.params?.id ?? "";
+        const detailStudent = await studentRepository.getDetail(studentId)
+        
+        res.status(HttpStatusCode.OK).json({
+            message: "GET detail successfully",
+            data: detailStudent
+        });
+    } catch (exception) {
+        res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).json({
+            message: exception.toString()
+        })
+    }
 };
 
 const create = async(req, res) => {
