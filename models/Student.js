@@ -1,5 +1,5 @@
 import mongoose, { Schema, ObjectId } from "mongoose";
-import isEmail from "validator/lib/isEmail";
+import isEmail from "validator/lib/isEmail.js";
 
 export default mongoose.model("Student", 
     new Schema({
@@ -30,12 +30,12 @@ export default mongoose.model("Student",
             },
             required: true
         },
-        phone: {
+        phoneNumber: {
             type: String,
             required: true,
             validate: {
-                validator: (phoneNumber) => phoneNumber.length > 8,
-                message: "Phone number must be at least 8 characters"
+                validator: (phoneNumber) => phoneNumber.length > 8 && phoneNumber.length <= 20,
+                message: "Phone number must be at least 8 characters, max: 20"
             }
         },
         address: { 

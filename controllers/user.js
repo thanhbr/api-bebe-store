@@ -23,9 +23,9 @@ const login = async (req, res) => {
             data: existingUser
         })
         
-    } catch (error) {
+    } catch (exception) {
         res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).json({
-            message: error.toString()
+            message: exception.toString()
         })
     }
 };
@@ -46,9 +46,9 @@ const register = async (req, res) => {
             message: "Register user successfully",
             data: user
         });
-    } catch (error) {
+    } catch (exception) {
         res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).json({
-            message: error.toString()
+            message: exception.toString()
         });
     }
 };
