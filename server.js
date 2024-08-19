@@ -1,26 +1,23 @@
-import express from "express";
-import * as dotenv from "dotenv";
-import {
-    userRouter,
-    studentRouter
-} from "./routes/index.js";
-import connect from "./database/database.js";
-import checkToken from "./authentication/auth.js";
+import express from 'express';
+import dotenv from 'dotenv';
+import router from './routes/index.js';
+import connect from './database/database.js';   
 
 dotenv.config();
 
 const app = express();
-app.use(checkToken);
-app.use(express.json());
-const port = process.env.PORT ?? 3000;
+const port = process.env.PORT || 3000;
 
-app.use("/users", userRouter);
-app.use("/students", studentRouter);
-app.get("/", (req,res) => {
-    res.send("This is a response");
-})
+app.use('/', router);
 
-app.listen(port, async() => {
+const startServer = async () => {
+  try {
     await connect();
-    console.log(`listening on port: ${port}`)
-});
+    app.listen(port, () => console.log(`listening on port: ${port}`));
+  } catch (error) {
+    console.error('Error connecting to database:', error);
+    process.exit(1);
+  }
+};
+
+startServer();
