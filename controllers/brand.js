@@ -30,6 +30,12 @@ const getList = async (req, res) => {
 const create = async (req, res) => {
     try {
         const { code, name, urlKey, logo } = req.body;
+        const hasBrand = await brandRepository.isBrandUnique({ code, urlKey });
+        if(hasBrand) {
+            res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).json({
+                message: MESSAGE.BRAND.EXIST
+            });
+        }
         const newBrand = await brandRepository.create({ code, name, urlKey, logo });
         res.status(HttpStatusCode.INSERT_OK).json({
             message: MESSAGE.BRAND.CREATED,

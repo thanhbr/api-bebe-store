@@ -15,7 +15,8 @@ const getList = async({ search, page, size}) => {
                     ]
                 } },
                 { $skip: ( page - 1 ) * size },
-                { $limit: size }
+                { $limit: size },
+                { $unset: ["__v"] }
             ]),
             Student.countDocuments({
                 $or: [

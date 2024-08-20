@@ -25,6 +25,7 @@ export const MESSAGE = {
         FAILED_CREATE: "Cannot create student",
     },
     BRAND: {
+        EXIST: "Code or url key already exists",
         CREATED: "Created brand successfully",
         FAILED_CREATE: "Cannot create brand",
         GET_LIST_SUCCESSFULLY: "Get brands successfully",
