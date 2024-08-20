@@ -6,6 +6,7 @@ export default mongoose.model("Brand",
         code: {
             type: String,
             required: true,
+            unique: true,
             validate: {
                 validator: (code) => code.length > 3,
                 message: "Brand code must be at least 4 characters. Eg: C001"
@@ -22,6 +23,7 @@ export default mongoose.model("Brand",
         urlKey: {
             type: String,
             required: true,
+            unique: true,
             validate: {
                 validator: (urlKey) => urlKey.length > 3,
                 message: "Brand url key must be at least 4 characters. Eg: C001"
