@@ -1,9 +1,9 @@
 import express from 'express';
 import loginRouter from "./login.js";
 import registerRouter from "./register.js";
-import userRouter from './users.js';
-import studentRouter from './students.js';
-import brandRouter from './brands.js';
+import userRouter from './user.js';
+import studentRouter from './student.js';
+import brandRouter from './brand.js';
 import checkToken from '../authentication/auth.js';
 import { PATH } from '../global/path.js';
 

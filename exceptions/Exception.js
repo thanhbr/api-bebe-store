@@ -13,6 +13,7 @@ export default class Exception extends Error {
     static CANNOT_FIND_STUDENT_BY_ID = MESSAGE.STUDENT.NOT_FIND_ID;
     static CANNOT_GET_STUDENT = MESSAGE.STUDENT.GET_LIST_FAILED;
     static CANNOT_CREATE_BRAND = MESSAGE.BRAND.FAILED_CREATE;
+    static CANNOT_GET_BRAND = MESSAGE.BRAND.GET_LIST_FAILED;
     
     constructor(message, validationErrors={}) {
         super(message);
