@@ -7,7 +7,7 @@ export default mongoose.model("Klass",
             type: String,
             required: true,
             validate: {
-                validator: () => this.name.length > 3,
+                validator: (code) => code.length > 3,
                 message: "Class's code must be at least 4 characters. Eg: C001"
             }
         },
@@ -15,7 +15,7 @@ export default mongoose.model("Klass",
             type: String,
             required: true,
             validate: {
-                validator: () => this.name.length > 3,
+                validator: (name) => name.length > 3,
                 message: "Class's name must be at least 4 characters. Eg: Class 1"
             }
         }

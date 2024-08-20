@@ -26,7 +26,7 @@ export const MESSAGE = {
     },
     BRAND: {
         CREATED: "Created brand successfully",
-        FAILED_CREATE: "Cannot created brand",
+        FAILED_CREATE: "Cannot create brand",
     },
     NOT_SUPPORTED: "not supported!!!"
 }

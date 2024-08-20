@@ -1,13 +1,13 @@
 import mongoose, { Schema, ObjectId } from "mongoose";
 
-export default mongoose.model("Branch", 
+export default mongoose.model("Brand", 
     new Schema({
         id: { type: ObjectId },
         code: {
             type: String,
             required: true,
             validate: {
-                validator: () => this.code.length > 3,
+                validator: (code) => code.length > 3,
                 message: "Brand code must be at least 4 characters. Eg: C001"
             }
         },
@@ -15,7 +15,7 @@ export default mongoose.model("Branch",
             type: String,
             required: true,
             validate: {
-                validator: () => this.name.length > 3,
+                validator: (name) => name.length > 3,
                 message: "Brand name must be at least 4 characters. Eg: C001"
             }
         },
@@ -23,7 +23,7 @@ export default mongoose.model("Branch",
             type: String,
             required: true,
             validate: {
-                validator: () => this.urlKey.length > 3,
+                validator: (urlKey) => urlKey.length > 3,
                 message: "Brand url key must be at least 4 characters. Eg: C001"
             }
         },
@@ -31,7 +31,7 @@ export default mongoose.model("Branch",
             type: String,
             required: true,
             validate: {
-                validator: () => this.logo.length > 3,
+                validator: (logo) => logo.length > 3,
                 message: "Brand logo must be at least 4 characters. Eg: C001"
             }
         }
