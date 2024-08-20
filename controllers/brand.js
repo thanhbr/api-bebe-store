@@ -32,9 +32,10 @@ const create = async (req, res) => {
         const { code, name, urlKey, logo } = req.body;
         const hasBrand = await brandRepository.isBrandUnique({ code, urlKey });
         if(hasBrand) {
-            res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).json({
+            res.status(HttpStatusCode.CONFLICT).json({
                 message: MESSAGE.BRAND.EXIST
             });
+            return;
         }
         const newBrand = await brandRepository.create({ code, name, urlKey, logo });
         res.status(HttpStatusCode.INSERT_OK).json({
