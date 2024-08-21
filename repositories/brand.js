@@ -1,5 +1,4 @@
 import Exception from "../exceptions/Exception.js";
-import { OutputType, print } from "../helpers/print.js";
 import Brand from "../models/Brand.js";
 
 

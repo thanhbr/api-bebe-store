@@ -2,5 +2,6 @@ export const PATH = {
     LOGIN: "/login",
     REGISTER: "/register",
     USERS: "/users",
-    STUDENTS: "/students"
+    STUDENTS: "/students",
+    BRANDS: "/brands"
 }

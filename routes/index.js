@@ -16,6 +16,6 @@ router.use(PATH.LOGIN, loginRouter);
 router.use(PATH.REGISTER, registerRouter)
 router.use(PATH.USERS, userRouter);
 router.use(PATH.STUDENTS, studentRouter);
-router.use("/brands", brandRouter);
+router.use(PATH.BRANDS, brandRouter);
 
 export default router;
