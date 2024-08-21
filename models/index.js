@@ -4,6 +4,7 @@ import Brand from "./Brand.js";
 import Category from "./Category.js";
 import Product from "./Product.js";
 import Promotion from "./Promotion.js";
+import Price from "./Price.js";
 
 export {
     User,
@@ -11,5 +12,6 @@ export {
     Brand,
     Category,
     Product,
+    Price,
     Promotion
 }

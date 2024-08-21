@@ -27,6 +27,22 @@ const getList = async (req, res) => {
     }
 }
 
+const getDetail = async (req, res) => {
+    try {
+        const brandId = req?.params?.id;
+        const detailBrand = await brandRepository.getDetail(brandId);
+        
+        res.status(HttpStatusCode.OK).json({
+            message: MESSAGE.BRAND.GET_DETAIL_SUCCESSFULLY,
+            data: detailBrand
+        })
+    } catch (exception) {
+        res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).json({
+            message: exception.toString()
+        })
+    }
+}
+
 const create = async (req, res) => {
     try {
         const { code, name, urlKey, logo } = req.body;
@@ -51,5 +67,6 @@ const create = async (req, res) => {
 
 export default {
     getList,
+    getDetail,
     create
 }
