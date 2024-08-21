@@ -2,6 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import router from './routes/index.js';
 import connect from './database/database.js';
+import errorHandler from './middleware/errorHandler.js';
 
 dotenv.config();
 
@@ -12,6 +13,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/', router);
+app.use(errorHandler);
 
 const startServer = async () => {
   try {
