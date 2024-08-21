@@ -8,6 +8,7 @@ export const MESSAGE = {
         LOGIN_SUCCESSFULLY: "Login user successfully",
         WRONG_ACCOUNT: "Incorrect email or password",
         EXIST: "User already exists",
+        NOT_REGISTER: "Cannot register user",
         REGISTER_SUCCESSFULLY: "Login user successfully",
         NOT_REGISTER: "Cannot register user",
         GET_LIST_SUCCESSFULLY: "Get users successfully",
@@ -16,6 +17,10 @@ export const MESSAGE = {
         EMAIL_INCORRECT_FORMAT: "Email is incorrect format",
         PASS_LEAST_8_CHARACTERS: "Password must be at least 8 characters",
         PHONE_LEAST_8_CHARACTERS: "Phone number must be at least 8 characters",
+        GET_LIST_FAILED: "Cannot get users",
+        CANNOT_GET_DETAIL_USER: "Cannot get detail user",
+        NOT_FIND_ID: "Cannot find user by id",
+        CANNOT_UPDATE_USER: "Cannot update user",
     },
     STUDENT: {
         GET_LIST_FAILED: "Cannot get students",

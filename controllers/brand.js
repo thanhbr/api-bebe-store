@@ -78,6 +78,12 @@ const update = async (req, res) => {
         }
 
         const updatedBrand = await brandRepository.update({ id, code, name, urlKey, logo });
+        if(!updatedBrand) {
+            res.status(HttpStatusCode.NOT_FOUND).json({
+                message: MESSAGE.BRAND.NOT_FIND_ID
+            });
+            return;
+        }
         res.status(HttpStatusCode.INSERT_OK).json({
             message: MESSAGE.BRAND.UPDATED,
             data: updatedBrand
