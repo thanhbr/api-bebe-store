@@ -1,11 +1,15 @@
-import Klass from "./Klass.js";
 import User from "./User.js";
 import Student from "./Student.js";
 import Brand from "./Brand.js";
+import Category from "./Category.js";
+import Product from "./Product.js";
+import Promotion from "./Promotion.js";
 
 export {
-    Klass,
     User,
     Student,
-    Brand
+    Brand,
+    Category,
+    Product,
+    Promotion
 }
