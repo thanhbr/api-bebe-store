@@ -38,7 +38,7 @@ const getList = async ({ search, page, size }) => {
 
 const getDetail = async (brandId) => {
     try {
-        const detailBrand = await Brand.findById(brandId);
+        const detailBrand = await Brand.findById(brandId).select("-createdAt -updatedAt -__v");
         if(!detailBrand) {
             throw new Exception(Exception.CANNOT_FIND_BRAND_BY_ID);
         }
@@ -61,7 +61,7 @@ const create = async ({ code, name, urlKey, logo }) => {
     }
 }
 
-const update = async ({ id, code, name, urlKey, logo }) => { // Add 'id' parameter
+const update = async ({ id, code, name, urlKey, logo }) => { 
     try {
         const updateData = {
             ...(code && { code }),
@@ -70,12 +70,21 @@ const update = async ({ id, code, name, urlKey, logo }) => { // Add 'id' paramet
             ...(logo && { logo }),
         };
 
-        const updatedBrand = await Brand.findByIdAndUpdate(id, updateData, { new: true }); // Return the updated document
+        // Check if the brand exists
+        const existingBrand = await Brand.findById(id);
 
-        if (!updatedBrand) {
-            throw new Exception(Exception.CANNOT_UPDATE_BRAND);
+        if (existingBrand) {
+            // Update the existing brand
+            const updatedBrand = await Brand.findByIdAndUpdate(id, updateData, { new: true });
+            if (!updatedBrand) {
+                throw new Exception(Exception.CANNOT_UPDATE_BRAND);
+            }
+            return updatedBrand;
+        } else {
+            // Create a new brand if the ID doesn't exist
+            const newBrand = await Brand.create({ ...updateData });
+            return newBrand;
         }
-        return updatedBrand;
     } catch (exception) {
         if(!!exception.errors) {
             throw new Exception(Exception.CANNOT_UPDATE_BRAND, exception.errors);
@@ -85,9 +94,25 @@ const update = async ({ id, code, name, urlKey, logo }) => { // Add 'id' paramet
     }
 }
 
-const isBrandUnique = async ({ code, urlKey }) => {
+const deleteBrand = async (brandId) => {
     try {
-        const hasBrand = await Brand.findOne({ $or: [{ code }, { urlKey }] });
+        const deletedBrand = await Brand.findByIdAndDelete(brandId);
+        if(!deletedBrand) {
+            throw new Exception(Exception.CANNOT_DELETE_BRAND);
+        }
+        return deletedBrand;
+    } catch (exception) {
+        throw new Exception(Exception.CANNOT_DELETE_BRAND);
+    }
+}
+
+const isBrandUnique = async ({ code, urlKey, id }) => {
+    try {
+        const query = { $or: [{ code }, { urlKey }] };
+        if(id) {
+            query._id = { $ne: id };
+        }
+        const hasBrand = await Brand.findOne(query);
         return !!hasBrand;
     } catch (error) {
         throw new Exception(Exception.CANNOT_CHECK_UNIQUE);
@@ -99,5 +124,6 @@ export default {
     getDetail,
     create,
     update,
+    deleteBrand,
     isBrandUnique
 }

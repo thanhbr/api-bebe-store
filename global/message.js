@@ -39,6 +39,8 @@ export const MESSAGE = {
         GET_LIST_FAILED: "Cannot get brands",
         CANNOT_CHECK_UNIQUE: "Cannot check brand uniqueness",
         NOT_FIND_ID: "Cannot find brand by id",
+        FAILED_DELETE: "Cannot delete brand",
+        DELETED: "Deleted brand successfully",
     },
     TOKEN: {
         EXPIRED: "Token expired",

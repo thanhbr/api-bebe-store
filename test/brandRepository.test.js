@@ -155,6 +155,113 @@ describe('Brand Repository', () => {
     });
   });
 
+  describe('update', () => {
+    let sandbox;
+    beforeEach(() => {
+      sandbox = sinon.createSandbox();
+    });
+
+    afterEach(() => {
+      sandbox.restore();
+    });
+
+    it('should update an existing brand', async () => {
+      const id = '647890123456789012345678';
+      const code = 'NIKE';
+      const name = 'Nike';
+      const urlKey = 'nike';
+      const logo = 'https://example.com/nike.png';
+      const updatedBrand = {
+        code,
+        name,
+        urlKey,
+        logo,
+        _id: id,
+      };
+
+      const mockFindByIdAndUpdate = sandbox.stub(Brand, 'findByIdAndUpdate').resolves(updatedBrand);
+      const mockFindById = sandbox.stub(Brand, 'findById').resolves(updatedBrand); // Stub for checking existing brand
+
+      const result = await brandRepository.update({ id, code, name, urlKey, logo });
+
+      expect(result).to.deep.equal(updatedBrand);
+      expect(mockFindByIdAndUpdate.calledOnceWith(id, { code, name, urlKey, logo }, { new: true })).to.be.true;
+      expect(mockFindById.calledOnceWith(id)).to.be.true; // Verify findById is called
+    });
+
+    it('should create a new brand if the ID doesn\'t exist', async () => {
+      const id = '647890123456789012345678';
+      const code = 'NIKE';
+      const name = 'Nike';
+      const urlKey = 'nike';
+      const logo = 'https://example.com/nike.png';
+      const newBrand = {
+        code,
+        name,
+        urlKey,
+        logo,
+        _id: id,
+      };
+
+      const mockCreate = sandbox.stub(Brand, 'create').resolves(newBrand);
+      const mockFindById = sandbox.stub(Brand, 'findById').resolves(null); // Stub for checking non-existing brand
+
+      const result = await brandRepository.update({ id, code, name, urlKey, logo });
+
+      expect(result).to.deep.equal(newBrand);
+      expect(mockCreate.calledOnceWith({ code, name, urlKey, logo })).to.be.true;
+      expect(mockFindById.calledOnceWith(id)).to.be.true; // Verify findById is called
+    });
+
+    it('should throw an exception if an error occurs during update', async () => {
+      const id = '647890123456789012345678';
+      const code = 'NIKE';
+      const name = 'Nike';
+      const urlKey = 'nike';
+      const logo = 'https://example.com/nike.png';
+      const error = new Error('Error updating brand');
+
+      const mockFindByIdAndUpdate = sandbox.stub(Brand, 'findByIdAndUpdate').rejects(error);
+      const mockFindById = sandbox.stub(Brand, 'findById').resolves({
+        code,
+        name,
+        urlKey,
+        logo,
+        _id: id,
+      });
+
+      try {
+        await brandRepository.update({ id, code, name, urlKey, logo });
+        expect.fail('Should have thrown an exception');
+      } catch (exception) {
+        expect(exception.message).to.equal(Exception.CANNOT_UPDATE_BRAND);
+        expect(mockFindByIdAndUpdate.calledOnceWith(id, { code, name, urlKey, logo }, { new: true })).to.be.true;
+        expect(mockFindById.calledOnceWith(id)).to.be.true; // Verify findById is called
+      }
+    });
+
+    it('should throw an exception if an error occurs during creation', async () => {
+      const id = '647890123456789012345678';
+      const code = 'NIKE';
+      const name = 'Nike';
+      const urlKey = 'nike';
+      const logo = 'https://example.com/nike.png';
+      const error = new Error('Error creating brand');
+
+      const mockCreate = sandbox.stub(Brand, 'create').rejects(error);
+      const mockFindById = sandbox.stub(Brand, 'findById').resolves(null); // Stub for checking non-existing brand
+
+      try {
+        await brandRepository.update({ id, code, name, urlKey, logo });
+        expect.fail('Should have thrown an exception');
+      } catch (exception) {
+        expect(exception.message).to.equal(Exception.CANNOT_UPDATE_BRAND);
+        expect(mockCreate.calledOnceWith({ code, name, urlKey, logo })).to.be.true;
+        expect(mockFindById.calledOnceWith(id)).to.be.true; // Verify findById is called
+      }
+    });
+  });
+
   describe('isBrandUnique', () => {
     let sandbox;
     beforeEach(() => {
@@ -165,7 +272,7 @@ describe('Brand Repository', () => {
       sandbox.restore();
     });
 
-    it('should return true if the brand code or urlKey is already in use', async () => {
+    it('should return true if the brand code or urlKey is already in use (without id)', async () => {
       const code = 'NIKE';
       const urlKey = 'nike';
       const existingBrand = { code, urlKey };
@@ -178,7 +285,7 @@ describe('Brand Repository', () => {
       expect(mockFindOne.calledOnceWith({ $or: [{ code }, { urlKey }] })).to.be.true;
     });
 
-    it('should return false if the brand code or urlKey is not in use', async () => {
+    it('should return false if the brand code or urlKey is not in use (without id)', async () => {
       const code = 'NIKE';
       const urlKey = 'nike';
 
@@ -190,7 +297,35 @@ describe('Brand Repository', () => {
       expect(mockFindOne.calledOnceWith({ $or: [{ code }, { urlKey }] })).to.be.true;
     });
 
+    it('should return true if the brand code or urlKey is already in use (with id)', async () => {
+      const id = '647890123456789012345678';
+      const code = 'NIKE';
+      const urlKey = 'nike';
+      const existingBrand = { code, urlKey };
+
+      const mockFindOne = sandbox.stub(Brand, 'findOne').resolves(existingBrand);
+
+      const result = await brandRepository.isBrandUnique({ code, urlKey, id });
+
+      expect(result).to.be.true;
+      expect(mockFindOne.calledOnceWith({ $or: [{ code }, { urlKey }], _id: { $ne: id } })).to.be.true;
+    });
+
+    it('should return false if the brand code or urlKey is not in use (with id)', async () => {
+      const id = '647890123456789012345678';
+      const code = 'NIKE';
+      const urlKey = 'nike';
+
+      const mockFindOne = sandbox.stub(Brand, 'findOne').resolves(null);
+
+      const result = await brandRepository.isBrandUnique({ code, urlKey, id });
+
+      expect(result).to.be.false;
+      expect(mockFindOne.calledOnceWith({ $or: [{ code }, { urlKey }], _id: { $ne: id } })).to.be.true;
+    });
+
     it('should throw an exception if an error occurs', async () => {
+      const id = '647890123456789012345678';
       const code = 'NIKE';
       const urlKey = 'nike';
       const error = new Error('Error checking brand uniqueness');
@@ -198,11 +333,11 @@ describe('Brand Repository', () => {
       const mockFindOne = sandbox.stub(Brand, 'findOne').rejects(error);
 
       try {
-        await brandRepository.isBrandUnique({ code, urlKey });
+        await brandRepository.isBrandUnique({ code, urlKey, id });
         expect.fail('Should have thrown an exception');
       } catch (exception) {
         expect(exception.message).to.equal(Exception.CANNOT_CHECK_UNIQUE);
-        expect(mockFindOne.calledOnceWith({ $or: [{ code }, { urlKey }] })).to.be.true;
+        expect(mockFindOne.calledOnceWith({ $or: [{ code }, { urlKey }], _id: { $ne: id } })).to.be.true;
       }
     });
   });
