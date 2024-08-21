@@ -12,6 +12,10 @@ export const MESSAGE = {
         NOT_REGISTER: "Cannot register user",
         GET_LIST_SUCCESSFULLY: "Get users successfully",
         GET_DETAIL_SUCCESSFULLY: "Get detail user successfully",
+        USER_NAME_LEAST_5_CHARACTERS : "User name must be at least 5 characters",
+        EMAIL_INCORRECT_FORMAT: "Email is incorrect format",
+        PASS_LEAST_8_CHARACTERS: "Password must be at least 8 characters",
+        PHONE_LEAST_8_CHARACTERS: "Phone number must be at least 8 characters",
     },
     STUDENT: {
         GET_LIST_FAILED: "Cannot get students",
@@ -40,5 +44,6 @@ export const MESSAGE = {
         EXPIRED: "Token expired",
         INVALID: "Invalid token",
     },
+    MIN_LENGTH: "must be at least 3 characters",
     NOT_SUPPORTED: "not supported!!!"
 }

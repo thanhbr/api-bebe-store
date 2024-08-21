@@ -1,23 +1,23 @@
-import mongoose, { Schema, ObjectId } from "mongoose";
+import mongoose, { Schema } from "mongoose";
+import { MESSAGE } from "../global/message.js";
 
 export default mongoose.model("Brand", 
     new Schema({
-        id: { type: ObjectId },
         code: {
             type: String,
             required: true,
             unique: true,
             validate: {
-                validator: (code) => code.length > 3,
-                message: "Brand code must be at least 4 characters. Eg: C001"
+                validator: (code) => code.length >= 3,
+                message: `Brand code ${MESSAGE.MIN_LENGTH}`
             }
         },
         name: {
             type: String,
             required: true,
             validate: {
-                validator: (name) => name.length > 3,
-                message: "Brand name must be at least 4 characters. Eg: C001"
+                validator: (name) => name.length >= 3,
+                message: `Brand name ${MESSAGE.MIN_LENGTH}`
             }
         },
         urlKey: {
@@ -25,16 +25,16 @@ export default mongoose.model("Brand",
             required: true,
             unique: true,
             validate: {
-                validator: (urlKey) => urlKey.length > 3,
-                message: "Brand url key must be at least 4 characters. Eg: C001"
+                validator: (urlKey) => urlKey.length >= 3,
+                message: `Brand url ${MESSAGE.MIN_LENGTH}`
             }
         },
         logo: {
             type: String,
             required: true,
             validate: {
-                validator: (logo) => logo.length > 3,
-                message: "Brand logo must be at least 4 characters. Eg: C001"
+                validator: (logo) => logo.length >= 3,
+                message: `Brand logo ${MESSAGE.MIN_LENGTH}`
             }
         }
     }, { timestamps: true } )

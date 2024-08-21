@@ -1,9 +1,8 @@
-import mongoose, { Schema, ObjectId } from "mongoose";
+import mongoose, { Schema } from "mongoose";
 import isEmail from "validator/lib/isEmail.js";
 
 export default mongoose.model("Student", 
     new Schema({
-        id: { type: ObjectId },
         name: { 
             type: String, 
             required: true,
