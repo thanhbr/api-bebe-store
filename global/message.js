@@ -36,5 +36,9 @@ export const MESSAGE = {
         CANNOT_CHECK_UNIQUE: "Cannot check brand uniqueness",
         NOT_FIND_ID: "Cannot find brand by id",
     },
+    TOKEN: {
+        EXPIRED: "Token expired",
+        INVALID: "Invalid token",
+    },
     NOT_SUPPORTED: "not supported!!!"
 }
