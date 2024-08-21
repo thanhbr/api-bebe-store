@@ -25,7 +25,7 @@ describe('Brand Repository', () => {
       ];
       const totalRecords = 20;
 
-      const mockAggregate = sandbox.stub(Brand, 'aggregate').resolves([filterBrands]);
+      const mockAggregate = sandbox.stub(Brand, 'aggregate').resolves(filterBrands);
       const mockCountDocuments = sandbox.stub(Brand, 'countDocuments').resolves(totalRecords);
 
       const result = await brandRepository.getList({ search, page, size });
@@ -147,7 +147,7 @@ describe('Brand Repository', () => {
 
       try {
         await brandRepository.create({ code, name, urlKey, logo });
-        expect.fail('Should have thrown an exception');
+        expect.fail(Exception.CANNOT_CREATE_BRAND);
       } catch (exception) {
         expect(exception.message).to.equal(Exception.CANNOT_CREATE_BRAND);
         expect(mockCreate.calledOnceWith({ code, name, urlKey, logo })).to.be.true;
@@ -201,7 +201,7 @@ describe('Brand Repository', () => {
         await brandRepository.isBrandUnique({ code, urlKey });
         expect.fail('Should have thrown an exception');
       } catch (exception) {
-        expect(exception.message).to.equal('error processing...');
+        expect(exception.message).to.equal(Exception.CANNOT_CHECK_UNIQUE);
         expect(mockFindOne.calledOnceWith({ $or: [{ code }, { urlKey }] })).to.be.true;
       }
     });

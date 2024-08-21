@@ -2,7 +2,7 @@ import Exception from "../exceptions/Exception.js";
 import { OutputType, print } from "../helpers/print.js";
 import Brand from "../models/Brand.js";
 
-// kiểm tra hàm getList đúng hay không 
+
 const getList = async ({ search, page, size }) => {
     try {
         const [filterBrands, totalRecords] = await Promise.all([
@@ -11,6 +11,8 @@ const getList = async ({ search, page, size }) => {
                     $match: { 
                         $or: [
                             { name: { $regex: `.*${search}.*`, $options: "i" } },
+                            { code: { $regex: `.*${search}.*`, $options: "i" } },
+                            { urlKey: { $regex: `.*${search}.*`, $options: "i" } },
                         ]
                     }
                 },
@@ -21,6 +23,8 @@ const getList = async ({ search, page, size }) => {
             Brand.countDocuments({
                 $or: [
                     { name: { $regex: `.*${search}.*`, $options: "i" } },
+                    { code: { $regex: `.*${search}.*`, $options: "i" } },
+                    { urlKey: { $regex: `.*${search}.*`, $options: "i" } },
                 ]
             })
         ]);
@@ -36,6 +40,9 @@ const getList = async ({ search, page, size }) => {
 const getDetail = async (brandId) => {
     try {
         const detailBrand = await Brand.findById(brandId);
+        if(!detailBrand) {
+            throw new Exception(Exception.CANNOT_FIND_BRAND_BY_ID);
+        }
         return detailBrand;
     } catch (exception) {
         throw new Exception(Exception.CANNOT_GET_BRAND);
@@ -44,12 +51,13 @@ const getDetail = async (brandId) => {
 
 const create = async ({ code, name, urlKey, logo }) => {
     try {
-        print(urlKey, OutputType.WARNING);
         const newBrand = await Brand.create({ code, name, urlKey, logo });
-        return { ...newBrand._doc }
+        return newBrand;
     } catch (exception) {
         if(!!exception.errors) {
             throw new Exception(Exception.CANNOT_CREATE_BRAND, exception.errors);
+        } else {
+            throw new Exception(Exception.CANNOT_CREATE_BRAND);
         }
     }
 }
@@ -66,12 +74,14 @@ const update = async ({ id, code, name, urlKey, logo }) => { // Add 'id' paramet
         const updatedBrand = await Brand.findByIdAndUpdate(id, updateData, { new: true }); // Return the updated document
 
         if (!updatedBrand) {
-            throw new Exception("Cannot update brand");
+            throw new Exception(Exception.CANNOT_UPDATE_BRAND);
         }
         return updatedBrand;
     } catch (exception) {
         if(!!exception.errors) {
-            throw new Exception("Cannot update brand", exception.errors);
+            throw new Exception(Exception.CANNOT_UPDATE_BRAND, exception.errors);
+        } else {
+            throw new Exception(Exception.CANNOT_UPDATE_BRAND);
         }
     }
 }
@@ -81,7 +91,7 @@ const isBrandUnique = async ({ code, urlKey }) => {
         const hasBrand = await Brand.findOne({ $or: [{ code }, { urlKey }] });
         return !!hasBrand;
     } catch (error) {
-        throw new Exception("Cannot check brand uniqueness"); // Use the correct exception
+        throw new Exception(Exception.CANNOT_CHECK_UNIQUE);
     }
 }
 
@@ -89,5 +99,6 @@ export default {
     getList,
     getDetail,
     create,
+    update,
     isBrandUnique
 }
