@@ -65,8 +65,49 @@ const create = async (req, res) => {
     }
 }
 
+const update = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { code, name, urlKey, logo } = req.body;
+        const hasBrand = await brandRepository.isBrandUnique({ code, urlKey, id });
+        if (hasBrand) {
+            res.status(HttpStatusCode.CONFLICT).json({
+                message: MESSAGE.BRAND.EXIST
+            });
+            return;
+        }
+
+        const updatedBrand = await brandRepository.update({ id, code, name, urlKey, logo });
+        res.status(HttpStatusCode.INSERT_OK).json({
+            message: MESSAGE.BRAND.UPDATED,
+            data: updatedBrand
+        });
+    } catch (exception) {
+        res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).json({
+            message: exception.toString()
+        });
+    }
+}
+
+const deleteBrand = async (req, res) => {
+    try {
+        const { id } =  req.params;
+        await brandRepository.deleteBrand(id);
+        res.status(HttpStatusCode.OK).json({
+            message: MESSAGE.BRAND.DELETED
+        })
+    } catch (exception) {
+        res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).json({
+            message: exception.toString()
+        })
+    }
+}
+
+
 export default {
     getList,
     getDetail,
-    create
+    create,
+    update,
+    deleteBrand
 }

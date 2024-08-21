@@ -21,6 +21,7 @@ export default class Exception extends Error {
     static CANNOT_UPDATE_BRAND = MESSAGE.BRAND.FAILED_UPDATE;
     static CANNOT_CHECK_UNIQUE = MESSAGE.BRAND.CANNOT_CHECK_UNIQUE;
     static CANNOT_FIND_BRAND_BY_ID = MESSAGE.BRAND.NOT_FIND_ID;
+    static CANNOT_DELETE_BRAND = MESSAGE.BRAND.FAILED_DELETE;
     
     constructor(message, validationErrors={}) {
         super(message);
