@@ -61,9 +61,7 @@ const create = async({
             phoneNumber,
             address
         });
-        return {
-            ...newStudent._doc,
-        }
+        return newStudent;
     } catch (exception) {
         if(!!exception.errors) {
             throw new Exception(Exception.CANNOT_CREATE_STUDENT, exception.errors);
