@@ -1,4 +1,3 @@
-import { OutputType, print } from "../helpers/print.js";
 import { User } from "../models/index.js";
 import Exception from './../exceptions/Exception.js';
 import bcrypt from "bcrypt";
@@ -102,7 +101,7 @@ const getList = async ({ search, page, size }) => {
 
 const getDetail = async (userId) => {
     try {
-        const detailUser = await User.findById(userId).select("-__v");
+        const detailUser = await User.findById(userId).select("-password -createdAt -updatedAt -__v");
         if(!detailUser) {
             throw new Exception(Exception.CANNOT_GET_DETAIL_USER);
         }
@@ -139,16 +138,39 @@ const update = async ({ id, name, email, password, phoneNumber, address, role })
     }
 }
 
+const deleteUser = async (id) => {
+    try {
+        const user = await User.findById(id);
+        if (!user) {
+          throw new Exception(Exception.CANNOT_FIND_USER_BY_ID);
+        }
+    
+        if (user.role !== "superAdmin") {
+          throw new Exception(Exception.PERMISSION_DENIED);
+        }
+    
+        await User.findByIdAndDelete(id);
+        return;
+    } catch (exception) {
+        if (exception.message !== Exception.CANNOT_FIND_USER_BY_ID &&
+            exception.message !== Exception.PERMISSION_DENIED) {
+            throw new Exception(Exception.CANNOT_DELETE_USER);
+        }
+
+        throw exception;
+    }
+}
+
 const isUserUnique = async ({ id, email, phoneNumber }) => {
     try {
-        const query = { $or: [{ phoneNumber }, { phoneNumber }] };
+        const query = { $or: [{ phoneNumber }, { email }] };
         if(id) {
             query._id = { $ne: id };
         }
         const hasUser = await User.findOne(query);
         return !!hasUser;
     } catch (error) {
-        throw new Exception(Exception.CANNOT_CHECK_UNIQUE);
+        throw new Exception(Exception.CANNOT_CHECK_USER_UNIQUE);
     }
 }
 
@@ -158,5 +180,6 @@ export default {
     getList,
     getDetail,
     update,
+    deleteUser,
     isUserUnique
 }

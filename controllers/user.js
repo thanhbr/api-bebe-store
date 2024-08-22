@@ -4,6 +4,7 @@ import {EventEmitter} from "node:events";
 import HttpStatusCode from "../exceptions/HttpStatusCode.js";
 import { MESSAGE } from "../global/message.js";
 import { DEFAULT_SIZE_RECORD, MAX_RECORD } from "../global/constant.js";
+import Exception from "../exceptions/Exception.js";
 
 const myEvent = new EventEmitter()
 myEvent.on("event.register.user", (params) => {
@@ -102,7 +103,7 @@ const getDetail = async (req, res) => {
     }
 };
 
-const update = async (req, res ) => {
+const update = async (req, res) => {
     try {
         const { id } = req.params;
         const { name, email, password, phoneNumber, address, role } = req.body;
@@ -132,10 +133,43 @@ const update = async (req, res ) => {
     }
 }
 
+const deleteUser = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { _id: authId } = req.user.data;
+        if(id === authId) {
+            res.status(HttpStatusCode.BAD_REQUEST).json({
+                message: `Error: ${MESSAGE.USER.CANNOT_DELETE_SELF}`
+            })
+            return;
+        }
+        
+        await userRepository.deleteUser(id);
+        res.status(HttpStatusCode.OK).json({
+            message: MESSAGE.USER.DELETED
+        });
+    } catch (exception) {
+        if(exception.message === Exception.CANNOT_FIND_USER_BY_ID) {
+            res.status(HttpStatusCode.NOT_FOUND).json({
+                message: exception.toString()
+            })
+        } else if(exception.message === Exception.PERMISSION_DENIED) {
+            res.status(HttpStatusCode.FORBIDDEN).json({
+                message: exception.toString()
+            })
+        } else {
+            res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).json({
+                message: exception.toString()
+            })
+        }
+    }
+}
+
 export default {
     login,
     register,
     getList,
     getDetail,
-    update
+    update,
+    deleteUser
 }
