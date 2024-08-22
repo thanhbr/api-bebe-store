@@ -1,3 +1,4 @@
+import { OutputType, print } from "../helpers/print.js";
 import { User } from "../models/index.js";
 import Exception from './../exceptions/Exception.js';
 import bcrypt from "bcrypt";
@@ -35,7 +36,7 @@ const register = async ({
     email, 
     password,
     phoneNumber,
-    address 
+    address,
 }) => {
     try {
         const existingUser = await User.findOne({ email }).exec();
@@ -57,7 +58,11 @@ const register = async ({
             password: "",
         };
     } catch (exception) {
-        throw new Exception(Exception.CANNOT_REGISTER);
+        if(!!exception.errors) {
+            throw new Exception(Exception.CANNOT_REGISTER, exception.errors);
+        } else {
+            throw new Exception(Exception.CANNOT_REGISTER);
+        }
     }
 }
 

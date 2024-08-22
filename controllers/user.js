@@ -50,7 +50,8 @@ const register = async (req, res) => {
         });
     } catch (exception) {
         res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).json({
-            message: exception.toString()
+            message: exception.toString(),
+            validationErrors: exception.validationErrors
         });
     }
 };

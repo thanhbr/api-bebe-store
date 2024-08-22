@@ -72,25 +72,22 @@ describe('Brand Controller', () => {
 
   describe('getDetail', () => {
     it('should return the details of a brand by ID', async () => {
-      const brandId = '647890123456789012345678';
+      const brandId = '66c3fe1b4c2a79ad8ecf8f33'; // Example brand ID
       const detailBrand = {
-        _id: '647890123456789012345678',
-        name: 'Nike',
-        code: 'NIKE',
-        urlKey: 'nike',
+        _id: '66c3fe1b4c2a79ad8ecf8f33',
+        code: '2155',
+        name: 'shoes Nike',
+        urlKey: 'shoes-nike',
         logo: 'https://example.com/nike.png',
-        createdAt: "2024-08-20T01:52:08.545Z",
-        updatedAt: "2024-08-20T01:52:08.545Z",
-        __v: 0
       };
 
-      req.params = { brandId };
+      req.params = { id: brandId }; // Set the brandId in req.params.id
       const mockGetDetail = sandbox.stub(brandRepository, 'getDetail').resolves(detailBrand);
+ 
 
       await brandController.getDetail(req, res);
 
-
-      expect(mockGetDetail.calledOnceWith(brandId)).to.be.false;
+      expect(mockGetDetail.calledOnceWith(brandId)).to.be.true; // Verify getDetail is called with the correct ID
       expect(res.status.calledOnceWith(HttpStatusCode.OK)).to.be.true;
       expect(res.json.calledOnceWith({
         message: MESSAGE.BRAND.GET_DETAIL_SUCCESSFULLY,
@@ -99,15 +96,15 @@ describe('Brand Controller', () => {
     });
 
     it('should handle error when getting brand details', async () => {
-      const brandId = '647890123456789012345678';
+      const brandId = '66c3fe1b4c2a79ad8ecf8f33'; // Example brand ID
       const error = new Error('Error getting brand details');
 
-      req.params = { brandId };
+      req.params = { id: brandId }; // Set the brandId in req.params.id
       const mockGetDetail = sandbox.stub(brandRepository, 'getDetail').rejects(error);
 
       await brandController.getDetail(req, res);
 
-      expect(mockGetDetail.calledOnceWith(brandId)).to.be.false;
+      expect(mockGetDetail.calledOnceWith(brandId)).to.be.true; // Verify getDetail is called with the correct ID
       expect(res.status.calledOnceWith(HttpStatusCode.INTERNAL_SERVER_ERROR)).to.be.true;
       expect(res.json.calledOnceWith({ message: error.toString() })).to.be.true;
     });
@@ -174,7 +171,7 @@ describe('Brand Controller', () => {
       expect(mockIsBrandUnique.calledOnceWith({ code, urlKey })).to.be.true;
       expect(mockCreate.calledOnceWith({ code, name, urlKey, logo })).to.be.true;
       expect(res.status.calledOnceWith(HttpStatusCode.INTERNAL_SERVER_ERROR)).to.be.true;
-      expect(res.json.calledOnceWith({ message: error.toString() })).to.be.true;
+      expect(res.json.calledOnceWith({ message: error.toString(), validateErrors: error.validationErrors })).to.be.true;
     });
   });
 
@@ -227,3 +224,4 @@ describe('Brand Controller', () => {
 //     });
 //   });
 });
+
