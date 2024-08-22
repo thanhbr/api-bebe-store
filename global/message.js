@@ -21,6 +21,10 @@ export const MESSAGE = {
         CANNOT_GET_DETAIL_USER: "Cannot get detail user",
         NOT_FIND_ID: "Cannot find user by id",
         CANNOT_UPDATE_USER: "Cannot update user",
+        CANNOT_DELETE_USER: "Cannot delete user",
+        CANNOT_CHECK_UNIQUE: "Cannot check user uniqueness",
+        DELETED: "Deleted user successfully",
+        CANNOT_DELETE_SELF: "Cannot delete self"
     },
     STUDENT: {
         GET_LIST_FAILED: "Cannot get students",
@@ -52,5 +56,6 @@ export const MESSAGE = {
         INVALID: "Invalid token",
     },
     MIN_LENGTH: "must be at least 3 characters",
+    PERMISSION_DENIED: "Permission denied",
     NOT_SUPPORTED: "not supported!!!"
 }
