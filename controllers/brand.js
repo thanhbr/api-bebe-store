@@ -61,6 +61,7 @@ const create = async (req, res) => {
     } catch (exception) {
         res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).json({
             message: exception.toString(),
+            validateErrors: exception.validationErrors
         })
     }
 }
@@ -90,7 +91,8 @@ const update = async (req, res) => {
         });
     } catch (exception) {
         res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).json({
-            message: exception.toString()
+            message: exception.toString(),
+            validatorErrors: exception.validationErrors
         });
     }
 }

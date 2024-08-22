@@ -67,8 +67,9 @@ describe('Brand Repository', () => {
     });
 
     it('should return the details of a brand by ID', async () => {
-      const brandId = '647890123456789012345678';
+      const brandId = '66c3fe1b4c2a79ad8ecf8f33';
       const detailBrand = {
+        _id: '66c3fe1b4c2a79ad8ecf8f33',
         name: 'Nike',
         code: 'NIKE',
         urlKey: 'nike',
@@ -76,7 +77,7 @@ describe('Brand Repository', () => {
       };
 
       const mockFindById = sandbox.stub(Brand, 'findById').resolves(detailBrand);
-
+      
       const result = await brandRepository.getDetail(brandId);
 
       expect(result).to.deep.equal(detailBrand);
