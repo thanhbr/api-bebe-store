@@ -55,6 +55,18 @@ export const MESSAGE = {
         EXPIRED: "Token expired",
         INVALID: "Invalid token",
     },
+    CATEGORY: {
+        EXIST: "Category already exists",
+        FAILED_CREATE: "Cannot create category",
+        FAILED_UPDATE: "Cannot update category",
+        GET_DETAIL_SUCCESSFULLY: "Get detail category successfully",
+        GET_LIST_SUCCESSFULLY: "Get categories successfully",
+        GET_LIST_FAILED: "Cannot get categories",
+        CANNOT_CHECK_UNIQUE: "Cannot check category uniqueness",
+        NOT_FIND_ID: "Cannot find category by id",
+        FAILED_DELETE: "Cannot delete category",
+        DELETED: "Deleted category successfully",
+    },
     MIN_LENGTH: "must be at least 3 characters",
     PERMISSION_DENIED: "Permission denied",
     NOT_SUPPORTED: "not supported!!!"

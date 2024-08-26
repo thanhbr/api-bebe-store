@@ -38,7 +38,7 @@ const getList = async ({ search, page, size }) => {
 
 const getDetail = async (brandId) => {
     try {
-        const detailBrand = await Brand.findById(brandId).select("-createdAt -updatedAt -__v");
+        const detailBrand = await Brand.findById(brandId);
         if(!detailBrand) {
             throw new Exception(Exception.CANNOT_FIND_BRAND_BY_ID);
         }
@@ -115,7 +115,7 @@ const isBrandUnique = async ({ code, urlKey, id }) => {
         const hasBrand = await Brand.findOne(query);
         return !!hasBrand;
     } catch (error) {
-        throw new Exception(Exception.CANNOT_CHECK_UNIQUE);
+        throw new Exception(Exception.CANNOT_CHECK_BRAND_UNIQUE);
     }
 }
 

@@ -8,7 +8,7 @@ export default mongoose.model("User",
             type: String, 
             required: true,
             validate: {
-                validator: (value) => value.length > 5,
+                validator: (value) => value.length >= 5,
                 message: Exception.USER_NAME_LEAST_5_CHARACTERS
             }
         },
