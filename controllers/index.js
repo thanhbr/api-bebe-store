@@ -5,9 +5,9 @@ import categoryController from "./category.js";
 import errorHandler from "../middleware/errorHandler.js";
 
 export {
-    userController,
-    studentController,
-    brandController,
-    categoryController,
-    errorHandler
-}
+  userController,
+  studentController,
+  brandController,
+  categoryController,
+  errorHandler,
+};

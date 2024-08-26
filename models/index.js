@@ -6,12 +6,4 @@ import Product from "./Product.js";
 import Promotion from "./Promotion.js";
 import Price from "./Price.js";
 
-export {
-    User,
-    Student,
-    Brand,
-    Category,
-    Product,
-    Price,
-    Promotion
-}
+export { User, Student, Brand, Category, Product, Price, Promotion };
