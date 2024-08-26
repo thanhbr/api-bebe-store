@@ -6,6 +6,7 @@ export default mongoose.model("Category",
         parentId: {
             type: Schema.Types.ObjectId,
             ref: 'Category',
+            default: null
         },
         name: {
             type: String,

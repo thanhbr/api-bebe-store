@@ -67,9 +67,9 @@ describe('Brand Repository', () => {
     });
 
     it('should return the details of a brand by ID', async () => {
-      const brandId = '66c3fe1b4c2a79ad8ecf8f33';
+      const brandId = '66c3fe1b4c2a79ad8ecf8f31';
       const detailBrand = {
-        _id: '66c3fe1b4c2a79ad8ecf8f33',
+        _id: '66c3fe1b4c2a79ad8ecf8f31',
         name: 'Nike',
         code: 'NIKE',
         urlKey: 'nike',
@@ -337,7 +337,7 @@ describe('Brand Repository', () => {
         await brandRepository.isBrandUnique({ code, urlKey, id });
         expect.fail('Should have thrown an exception');
       } catch (exception) {
-        expect(exception.message).to.equal(Exception.CANNOT_CHECK_UNIQUE);
+        expect(exception.message).to.equal(Exception.CANNOT_CHECK_BRAND_UNIQUE);
         expect(mockFindOne.calledOnceWith({ $or: [{ code }, { urlKey }], _id: { $ne: id } })).to.be.true;
       }
     });
