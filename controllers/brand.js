@@ -1,30 +1,10 @@
 import HttpStatusCode from "../exceptions/HttpStatusCode.js";
-import { DEFAULT_SIZE_RECORD, MAX_RECORD } from "../global/constant.js";
 import { MESSAGE } from "../global/message.js";
 import { brandRepository } from "../repositories/index.js";
+import { getList } from "./helpers.js";
 
-const getList = async (req, res) => {
-  try {
-    let { search = "", page = 1, size = DEFAULT_SIZE_RECORD } = req.query;
-    page = parseInt(page);
-    size = parseInt(size >= MAX_RECORD ? MAX_RECORD : size);
-    const query = await brandRepository.getList({ search, page, size });
-
-    res.status(HttpStatusCode.OK).json({
-      message: MESSAGE.BRAND.GET_LIST_SUCCESSFULLY,
-      metadata: {
-        current_page: page,
-        per_page: size,
-        total_item: query.totalRecords,
-        total_page: Math.ceil(query.totalRecords / size),
-      },
-      data: query.filterBrands,
-    });
-  } catch (exception) {
-    res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).json({
-      message: exception.toString(),
-    });
-  }
+const getListBrands = async (req, res) => {
+  await getList(req, res, brandRepository, 'search');
 };
 
 const getDetail = async (req, res) => {
@@ -118,7 +98,7 @@ const deleteBrand = async (req, res) => {
 };
 
 export default {
-  getList,
+  getList: getListBrands,
   getDetail,
   create,
   update,
