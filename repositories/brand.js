@@ -3,7 +3,7 @@ import Brand from "../models/Brand.js";
 
 const getList = async ({ search, page, size }) => {
   try {
-    const [filterBrands, totalRecords] = await Promise.all([
+    const [data, totalRecords] = await Promise.all([
       Brand.aggregate([
         {
           $match: {
@@ -27,7 +27,7 @@ const getList = async ({ search, page, size }) => {
       }),
     ]);
     return {
-      filterBrands,
+      data,
       totalRecords,
     };
   } catch (exception) {

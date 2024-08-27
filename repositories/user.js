@@ -66,7 +66,7 @@ const register = async ({ name, email, password, phoneNumber, address }) => {
 
 const getList = async ({ search, page, size }) => {
   try {
-    const [filterUsers, totalRecords] = await Promise.all([
+    const [data, totalRecords] = await Promise.all([
       User.aggregate([
         {
           $match: {
@@ -90,7 +90,7 @@ const getList = async ({ search, page, size }) => {
       }),
     ]);
     return {
-      filterUsers,
+      data,
       totalRecords,
     };
   } catch (exception) {

@@ -5,6 +5,7 @@ import HttpStatusCode from "../exceptions/HttpStatusCode.js";
 import { MESSAGE } from "../global/message.js";
 import { DEFAULT_SIZE_RECORD, MAX_RECORD } from "../global/constant.js";
 import Exception from "../exceptions/Exception.js";
+import { getList } from "./helpers.js";
 
 const myEvent = new EventEmitter();
 myEvent.on("event.register.user", (params) => {
@@ -56,29 +57,8 @@ const register = async (req, res) => {
   }
 };
 
-const getList = async (req, res) => {
-  try {
-    let { search = "", page = 1, size = DEFAULT_SIZE_RECORD } = req.query;
-    page = parseInt(page);
-    size = parseInt(size >= MAX_RECORD ? MAX_RECORD : size);
-
-    const query = await userRepository.getList({ search, page, size });
-
-    res.status(HttpStatusCode.OK).json({
-      message: MESSAGE.USER.GET_LIST_SUCCESSFULLY,
-      metaData: {
-        current_page: page,
-        per_page: size,
-        total_item: query.totalRecords,
-        total_page: Math.ceil(query.totalRecords / size),
-      },
-      data: query.filterUsers,
-    });
-  } catch (exception) {
-    res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).json({
-      message: exception.toString(),
-    });
-  }
+const getListUsers = async (req, res) => {
+  await getList(req, res, userRepository);
 };
 
 const getDetail = async (req, res) => {
@@ -179,7 +159,7 @@ const deleteUser = async (req, res) => {
 export default {
   login,
   register,
-  getList,
+  getList: getListUsers,
   getDetail,
   update,
   deleteUser,

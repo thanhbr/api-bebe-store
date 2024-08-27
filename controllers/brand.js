@@ -4,7 +4,7 @@ import { brandRepository } from "../repositories/index.js";
 import { getList } from "./helpers.js";
 
 const getListBrands = async (req, res) => {
-  await getList(req, res, brandRepository, 'search');
+  await getList(req, res, brandRepository);
 };
 
 const getDetail = async (req, res) => {

@@ -2,7 +2,7 @@ import HttpStatusCode from "../exceptions/HttpStatusCode.js";
 import { DEFAULT_SIZE_RECORD, MAX_RECORD } from "../global/constant.js";
 import { MESSAGE } from "../global/message.js";
 
-export const getList = async (req, res, repository, searchKey) => {
+export const getList = async (req, res, repository, searchKey = "search") => {
   try {
     let { search = "", page = 1, size = DEFAULT_SIZE_RECORD } = req.query;
     page = parseInt(page);
@@ -17,7 +17,7 @@ export const getList = async (req, res, repository, searchKey) => {
         total_item: query.totalRecords,
         total_page: Math.ceil(query.totalRecords / size),
       },
-      data: query.data, // Trả về dữ liệu 
+      data: query.data, // Trả về dữ liệu
     });
   } catch (exception) {
     res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).json({
