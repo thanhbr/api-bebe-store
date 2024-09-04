@@ -41,16 +41,20 @@ describe("Brand Model", () => {
       );
     });
 
-    it("should validate logo with minimum length", () => {
+    it("should validate logo with minimum length and URL format", async () => {
       const brand = new Brand({
         code: "NIKE",
         name: "Nike",
         urlKey: "nike",
         logo: "ht",
       });
-      expect(brand.validateSync().errors.logo.message).to.equal(
-        `Brand logo ${MESSAGE.MIN_LENGTH}`,
-      );
+
+      const validationError = brand.validateSync();
+      expect(validationError.errors.logo.message).to.equal('Brand logo must be at least 3 characters');
+
+      brand.logo = 'http://';
+      const urlValidationError = brand.validateSync();
+      expect(urlValidationError.errors.logo.message).to.equal('Brand logo must be a valid URL');
     });
 
     it("should validate code uniqueness", () => {

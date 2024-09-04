@@ -19,7 +19,7 @@ describe("Brand Repository", () => {
       const search = "Nike";
       const page = 1;
       const size = 10;
-      const filterBrands = [
+      const data = [
         {
           name: "Nike",
           code: "NIKE",
@@ -35,9 +35,7 @@ describe("Brand Repository", () => {
       ];
       const totalRecords = 20;
 
-      const mockAggregate = sandbox
-        .stub(Brand, "aggregate")
-        .resolves(filterBrands);
+      const mockAggregate = sandbox.stub(Brand, "aggregate").resolves(data);
       const mockCountDocuments = sandbox
         .stub(Brand, "countDocuments")
         .resolves(totalRecords);
@@ -45,7 +43,7 @@ describe("Brand Repository", () => {
       const result = await brandRepository.getList({ search, page, size });
 
       expect(result).to.deep.equal({
-        filterBrands,
+        data,
         totalRecords,
       });
       expect(mockAggregate.calledOnce).to.be.true;

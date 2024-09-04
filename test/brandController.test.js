@@ -32,7 +32,7 @@ describe("Brand Controller", () => {
       const search = "Nike";
       const page = 1;
       const size = 10;
-      const filterBrands = [
+      const data = [
         {
           name: "Nike",
           code: "NIKE",
@@ -51,7 +51,7 @@ describe("Brand Controller", () => {
       req.query = { search, page, size };
       const mockGetList = sandbox
         .stub(brandRepository, "getList")
-        .resolves({ filterBrands, totalRecords });
+        .resolves({ data, totalRecords });
 
       await brandController.getList(req, res);
 
@@ -59,14 +59,14 @@ describe("Brand Controller", () => {
       expect(res.status.calledOnceWith(HttpStatusCode.OK)).to.be.true;
       expect(
         res.json.calledOnceWith({
-          message: MESSAGE.BRAND.GET_LIST_SUCCESSFULLY,
+          message: MESSAGE.GET_DATA_SUCCESSFULLY,
           metadata: {
             current_page: page,
             per_page: size,
             total_item: totalRecords,
             total_page: Math.ceil(totalRecords / size),
           },
-          data: filterBrands,
+          data: data,
         }),
       ).to.be.true;
     });
@@ -217,53 +217,121 @@ describe("Brand Controller", () => {
       ).to.be.true;
     });
   });
+  describe("update", () => {
+    it("should update an existing brand", async () => {
+      const id = "647890123456789012345678";
+      const code = "UPDATED";
+      const name = "Updated Brand";
+      const urlKey = "updated-brand";
+      const logo = "https://example.com/updated-brand.png";
+      const updatedBrand = {
+        code,
+        name,
+        urlKey,
+        logo,
+        _id: id,
+      };
 
-  //   describe('update', () => {
-  //     it('should update a brand', async () => {
-  //       const brandId = '647890123456789012345678';
-  //       const code = 'NIKE';
-  //       const name = 'Nike';
-  //       const urlKey = 'nike';
-  //       const logo = 'https://example.com/nike.png';
-  //       const updatedBrand = {
-  //         code,
-  //         name,
-  //         urlKey,
-  //         logo,
-  //         _id: '647890123456789012345678',
-  //       };
+      req.params = { id };
+      req.body = { code, name, urlKey, logo };
 
-  //       req.params = { brandId };
-  //       req.body = { code, name, urlKey, logo };
-  //       const mockUpdate = sandbox.stub(brandRepository, 'update').resolves(updatedBrand);
+      const mockIsBrandUnique = sandbox
+        .stub(brandRepository, "isBrandUnique")
+        .resolves(false);
+      const mockUpdate = sandbox
+        .stub(brandRepository, "update")
+        .resolves(updatedBrand);
 
-  //       await brandController.update(req, res);
+      await brandController.update(req, res);
 
-  //       expect(mockUpdate.calledOnceWith({ id: brandId, code, name, urlKey, logo })).to.be.true;
-  //       expect(res.status.calledOnceWith(HttpStatusCode.OK)).to.be.true;
-  //       expect(res.json.calledOnceWith({
-  //         message: MESSAGE.BRAND.UPDATED,
-  //         data: updatedBrand,
-  //       })).to.be.true;
-  //     });
+      expect(mockIsBrandUnique.calledOnceWith({ code, urlKey, id })).to.be.true;
+      expect(mockUpdate.calledOnceWith({ id, code, name, urlKey, logo })).to.be
+        .true;
+      expect(res.status.calledOnceWith(HttpStatusCode.INSERT_OK)).to.be.true;
+      expect(
+        res.json.calledOnceWith({
+          message: MESSAGE.BRAND.UPDATED,
+          data: updatedBrand,
+        }),
+      ).to.be.true;
+    });
 
-  //     it('should handle error when updating a brand', async () => {
-  //       const brandId = '647890123456789012345678';
-  //       const code = 'NIKE';
-  //       const name = 'Nike';
-  //       const urlKey = 'nike';
-  //       const logo = 'https://example.com/nike.png';
-  //       const error = new Error('Error updating brand');
+    it("should return conflict if brand already exists", async () => {
+      const id = "647890123456789012345678";
+      const code = "UPDATED";
+      const name = "Updated Brand";
+      const urlKey = "updated-brand";
+      const logo = "https://example.com/updated-brand.png";
 
-  //       req.params = { brandId };
-  //       req.body = { code, name, urlKey, logo };
-  //       const mockUpdate = sandbox.stub(brandRepository, 'update').rejects(error);
+      req.params = { id };
+      req.body = { code, name, urlKey, logo };
 
-  //       await brandController.update(req, res);
+      const mockIsBrandUnique = sandbox
+        .stub(brandRepository, "isBrandUnique")
+        .resolves(true);
 
-  //       expect(mockUpdate.calledOnceWith({ id: brandId, code, name, urlKey, logo })).to.be.true;
-  //       expect(res.status.calledOnceWith(HttpStatusCode.INTERNAL_SERVER_ERROR)).to.be.true;
-  //       expect(res.json.calledOnceWith({ message: error.toString() })).to.be.true;
-  //     });
-  //   });
+      await brandController.update(req, res);
+
+      expect(mockIsBrandUnique.calledOnceWith({ code, urlKey, id })).to.be.true;
+      expect(res.status.calledOnceWith(HttpStatusCode.CONFLICT)).to.be.true;
+      expect(res.json.calledOnceWith({ message: MESSAGE.BRAND.EXIST })).to.be
+        .true;
+    });
+
+    it("should return not found if brand doesn't exist", async () => {
+      const id = "647890123456789012345678";
+      const code = "UPDATED";
+      const name = "Updated Brand";
+      const urlKey = "updated-brand";
+      const logo = "https://example.com/updated-brand.png";
+
+      req.params = { id };
+      req.body = { code, name, urlKey, logo };
+
+      const mockIsBrandUnique = sandbox
+        .stub(brandRepository, "isBrandUnique")
+        .resolves(false);
+      const mockUpdate = sandbox.stub(brandRepository, "update").resolves(null);
+
+      await brandController.update(req, res);
+
+      expect(mockIsBrandUnique.calledOnceWith({ code, urlKey, id })).to.be.true;
+      expect(mockUpdate.calledOnceWith({ id, code, name, urlKey, logo })).to.be
+        .true;
+      expect(res.status.calledOnceWith(HttpStatusCode.NOT_FOUND)).to.be.true;
+      expect(res.json.calledOnceWith({ message: MESSAGE.BRAND.NOT_FIND_ID })).to
+        .be.true;
+    });
+
+    it("should handle error when updating a brand", async () => {
+      const id = "647890123456789012345678";
+      const code = "UPDATED";
+      const name = "Updated Brand";
+      const urlKey = "updated-brand";
+      const logo = "https://example.com/updated-brand.png";
+      const error = new Error("Error updating brand");
+
+      req.params = { id };
+      req.body = { code, name, urlKey, logo };
+
+      const mockIsBrandUnique = sandbox
+        .stub(brandRepository, "isBrandUnique")
+        .resolves(false);
+      const mockUpdate = sandbox.stub(brandRepository, "update").rejects(error);
+
+      await brandController.update(req, res);
+
+      expect(mockIsBrandUnique.calledOnceWith({ code, urlKey, id })).to.be.true;
+      expect(mockUpdate.calledOnceWith({ id, code, name, urlKey, logo })).to.be
+        .true;
+      expect(res.status.calledOnceWith(HttpStatusCode.INTERNAL_SERVER_ERROR)).to
+        .be.true;
+      expect(
+        res.json.calledOnceWith({
+          message: error.toString(),
+          validatorErrors: error.validationErrors,
+        }),
+      ).to.be.true;
+    });
+  });
 });

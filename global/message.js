@@ -67,6 +67,7 @@ export const MESSAGE = {
     FAILED_DELETE: "Cannot delete category",
     DELETED: "Deleted category successfully",
   },
+  GET_DATA_SUCCESSFULLY: "Get data successfully",
   MIN_LENGTH: "must be at least 3 characters",
   PERMISSION_DENIED: "Permission denied",
   NOT_SUPPORTED: "not supported!!!",

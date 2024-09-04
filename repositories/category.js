@@ -3,7 +3,7 @@ import Category from "../models/Category.js";
 
 const getList = async ({ search, page, size }) => {
   try {
-    const [filterCategories, totalRecords] = await Promise.all([
+    const [data, totalRecords] = await Promise.all([
       Category.aggregate([
         {
           $match: {
@@ -25,7 +25,7 @@ const getList = async ({ search, page, size }) => {
       }),
     ]);
     return {
-      filterCategories,
+      data,
       totalRecords,
     };
   } catch (exception) {
