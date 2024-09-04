@@ -7,6 +7,7 @@ const getList = async ({ search, page, size }) => {
       Brand.aggregate([
         {
           $match: {
+            isDeleted: { $ne: true },
             $or: [
               { name: { $regex: `.*${search}.*`, $options: "i" } },
               { code: { $regex: `.*${search}.*`, $options: "i" } },
@@ -19,6 +20,7 @@ const getList = async ({ search, page, size }) => {
         { $unset: ["createdAt", "updatedAt", "__v"] },
       ]),
       Brand.countDocuments({
+        isDeleted: { $ne: true },
         $or: [
           { name: { $regex: `.*${search}.*`, $options: "i" } },
           { code: { $regex: `.*${search}.*`, $options: "i" } },
@@ -107,6 +109,38 @@ const deleteBrand = async (brandId) => {
   }
 };
 
+const softDelete = async (brandId) => {
+  try {
+    const updatedBrand = await Brand.findByIdAndUpdate(
+      brandId,
+      { isDeleted: true },
+      { new: true }
+    );
+    if (!updatedBrand) {
+      throw new Exception(Exception.CANNOT_FIND_BRAND_BY_ID);
+    }
+    return updatedBrand;
+  } catch (exception) {
+    throw new Exception(Exception.CANNOT_DELETE_BRAND);
+  }
+};
+
+const restore = async (brandId) => {
+  try {
+    const restoredBrand = await Brand.findByIdAndUpdate(
+      brandId,
+      { isDeleted: false },
+      { new: true }
+    );
+    if (!restoredBrand) {
+      throw new Exception(Exception.CANNOT_FIND_BRAND_BY_ID);
+    }
+    return restoredBrand;
+  } catch (exception) {
+    throw new Exception(Exception.CANNOT_RESTORE_BRAND);
+  }
+};
+
 const isBrandUnique = async ({ code, urlKey, id }) => {
   try {
     const query = { $or: [{ code }, { urlKey }] };
@@ -125,6 +159,7 @@ export default {
   getDetail,
   create,
   update,
-  deleteBrand,
+  deleteBrand: softDelete,
   isBrandUnique,
+  restore,
 };

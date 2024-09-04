@@ -34,10 +34,25 @@ export default mongoose.model(
       logo: {
         type: String,
         required: true,
-        validate: {
-          validator: (logo) => logo.length >= 3,
-          message: `Brand logo ${MESSAGE.MIN_LENGTH}`,
-        },
+        validate: [
+          {
+            validator: function(v) {
+              return v.length >= 3;
+            },
+            message: 'Brand logo must be at least 3 characters'
+          },
+          {
+            validator: function(v) {
+              const urlPattern = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
+              return urlPattern.test(v);
+            },
+            message: 'Brand logo must be a valid URL'
+          }
+        ]
+      },
+      isDeleted: {
+        type: Boolean,
+        default: false
       },
     },
     { timestamps: true },
