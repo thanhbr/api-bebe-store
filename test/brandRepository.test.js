@@ -412,3 +412,126 @@ describe("Brand Repository", () => {
     });
   });
 });
+
+
+describe("Brand Repository Integration Tests", () => {
+  let sandbox;
+
+  beforeEach(() => {
+    sandbox = sinon.createSandbox();
+  });
+
+  afterEach(() => {
+    sandbox.restore();
+  });
+
+  describe("create", () => {
+    it("should create a new brand and find it in getList", async () => {
+      const code = "NIKE";
+      const name = "Nike";
+      const urlKey = "nike";
+      const logo = "https://example.com/nike.png";
+      const newBrand = {
+        code,
+        name,
+        urlKey,
+        logo,
+        _id: "647890123456789012345678",
+      };
+
+      // Stub for create
+      const mockCreate = sandbox.stub(Brand, "create").resolves(newBrand);
+
+      // Stub for getList
+      const mockAggregate = sandbox.stub(Brand, "aggregate").resolves([newBrand]);
+      const mockCountDocuments = sandbox.stub(Brand, "countDocuments").resolves(1);
+
+      // Create brand
+      const createdBrand = await brandRepository.create({ code, name, urlKey, logo });
+
+      expect(createdBrand).to.deep.equal(newBrand);
+      expect(mockCreate.calledOnceWith({ code, name, urlKey, logo })).to.be.true;
+
+      // Get list of brands
+      const result = await brandRepository.getList({ search: "", page: 1, size: 10 });
+
+      expect(result).to.deep.equal({
+        data: [newBrand],
+        totalRecords: 1,
+      });
+      expect(mockAggregate.calledOnce).to.be.true;
+      expect(mockCountDocuments.calledOnce).to.be.true;
+    });
+
+    it("should throw an exception if an error occurs during create", async () => {
+      const code = "NIKE";
+      const name = "Nike";
+      const urlKey = "nike";
+      const logo = "https://example.com/nike.png";
+      const error = new Error("Error creating brand");
+
+      const mockCreate = sandbox.stub(Brand, "create").rejects(error);
+
+      try {
+        await brandRepository.create({ code, name, urlKey, logo });
+        expect.fail("Should have thrown an exception");
+      } catch (exception) {
+        expect(exception.message).to.equal(Exception.CANNOT_CREATE_BRAND);
+        expect(mockCreate.calledOnceWith({ code, name, urlKey, logo })).to.be.true;
+      }
+    });
+  });
+
+  describe("getList", () => {
+    it("should return a list of brands with pagination and total records", async () => {
+      const search = "Nike";
+      const page = 1;
+      const size = 10;
+      const data = [
+        {
+          name: "Nike",
+          code: "NIKE",
+          urlKey: "nike",
+          logo: "https://example.com/nike.png",
+        },
+        {
+          name: "Adidas",
+          code: "ADIDAS",
+          urlKey: "adidas",
+          logo: "https://example.com/adidas.png",
+        },
+      ];
+      const totalRecords = 20;
+
+      const mockAggregate = sandbox.stub(Brand, "aggregate").resolves(data);
+      const mockCountDocuments = sandbox.stub(Brand, "countDocuments").resolves(totalRecords);
+
+      const result = await brandRepository.getList({ search, page, size });
+
+      expect(result).to.deep.equal({
+        data,
+        totalRecords,
+      });
+      expect(mockAggregate.calledOnce).to.be.true;
+      expect(mockCountDocuments.calledOnce).to.be.true;
+    });
+
+    it("should throw an exception if an error occurs during getList", async () => {
+      const search = "Nike";
+      const page = 1;
+      const size = 10;
+      const error = new Error("Error getting brands");
+
+      const mockAggregate = sandbox.stub(Brand, "aggregate").rejects(error);
+
+      try {
+        await brandRepository.getList({ search, page, size });
+        expect.fail("Should have thrown an exception");
+      } catch (exception) {
+        expect(exception.message).to.equal(Exception.CANNOT_GET_BRAND);
+        expect(mockAggregate.calledOnce).to.be.true;
+      }
+    });
+  });
+
+});
